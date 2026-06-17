@@ -1,8 +1,8 @@
-# 코딩 에이전트 심층 비교 분석 보고서 (v2.4)
+# 코딩 에이전트 심층 비교 분석 보고서 (v2.5)
 
 > 작성 기준일: 2026-06-17
 >
-> **Caveat**: 특수 목적형 에이전트(OpenClaw, oh-my-openagent, Hermes Agent)의 경우 공식 문서가 제한적일 수 있어, 일부 기능 평가는 커뮤니티 리뷰 및 기술 블로그 기반의 추정을 포함하고 있습니다. 본 리포트는 타 에이전트(Claude)의 분석 결과를 비판적으로 수용하고 22개 이상의 지표로 대폭 확장한 최종 통합본입니다.
+> **Caveat**: 특수 목적형 에이전트(OpenClaw, oh-my-openagent, Hermes Agent)의 경우 공식 문서가 제한적일 수 있어, 일부 기능 평가는 커뮤니티 리뷰 및 기술 블로그 기반의 추정을 포함하고 있습니다. 본 리포트는 타 에이전트(Claude)와의 상호 비판적 검증을 거쳐 모든 쟁점이 해소된 최종 통합 동기화 버전입니다.
 
 ## 1. 종합 비교 테이블
 
@@ -12,57 +12,59 @@
 | 비교 항목 | Claude Code | Codex CLI | Antigravity | OpenClaw | oh-my-openagent | Hermes Agent |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Agentic Memory** | ● | ● | ● | ◐ | ◐ | ● |
-| **Learning Loop** | ◐ | ◐ | ● | ○ | ○ | ● |
+| **자기개선 학습 루프** | ◐ | ◐ | ◐ | ○ | ○ | ● |
 | **Context Strategy** | 5-Layer | Summary | Knowledge | Basic | Tokenmax | Tiered |
-| **Multi-Agent** | ● | ◐ | ● | ● | ● | ● |
-| **Model Routing** | ◐ | ◐ | ◐ | ● | ● | ● |
-| **Code Analysis** | ● | ◐ | ● | ◐ | ● | ◐ |
+| **멀티/서브 에이전트** | ● | ◐ | ● | ● | ● | ● |
+| **멀티모델 라우팅** | ◐ | ◐ | ◐ | ● | ● | ◐ |
+| **코드 인텔리전스** | ◐ | ◐ | ● | ◐ | ● | ◐ |
 
 ### 1.2 하네스 및 운영 (Harness & Ops)
 | 비교 항목 | Claude Code | Codex CLI | Antigravity | OpenClaw | oh-my-openagent | Hermes Agent |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Lifecycle Hooks** | ● | ◐ | ◐ | ◐ | ● | ◐ |
-| **Permissions** | ● | ● | ◐ | ◐ | ◐ | ◐ |
-| **Sandboxing** | ● | ● | ● | ◐ | ◐ | ● |
-| **Checkpoint/Rewind**| ● | ◐ | ● | ○ | ○ | ◐ |
-| **Git/Worktree** | ● | ◐ | ● | ● | ◐ | ◐ |
-| **CI/CD / Headless** | ● | ● | ● | ● | ◐ | ● |
-| **Task Scheduling** | ○ | ● | ● | ● | ○ | ● |
+| **다단계 권한(Permissions)**| ● | ● | ◐ | ◐ | ◐ | ◐ |
+| **샌드박싱(Sandboxing)** | ● | ● | ● | ◐ | ◐ | ◐ |
+| **체크포인트/롤백** | ● | ◐ | ● | ○ | ○ | ○ |
+| **Git/Worktree 격리** | ● | ◐ | ◐ | ◐ | ◐ | ◐ |
+| **Headless/CI-Native** | ● | ● | ◐ | ◐ | ◐ | ◐ |
+| **작업 스케줄링(cron)** | ◐ | ◐ | ● | ● | ○ | ● |
 
 ### 1.3 사용자 경험 및 확장성 (UX & Ecosystem)
 | 비교 항목 | Claude Code | Codex CLI | Antigravity | OpenClaw | oh-my-openagent | Hermes Agent |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Multi-Modality** | ● | ◐ | ● | ◐ | ○ | ● |
-| **Interactive Debug** | ◐ | ◐ | ● | ◐ | ● | ◐ |
-| **Surface/Channel** | CLI / IDE | CLI | IDE / TUI | Messaging | CLI | **Msg Gateway** |
-| **Session Handoff** | ○ | ○ | ◐ | ◐ | ○ | ● |
-| **Profile Dist.** | ○ | ○ | ◐ | ● | ○ | ● |
-| **Ecosystem** | MCP / Skills | MCP / Agents | Plugin / MCP | ● | MCP / Skills | Skill Standard |
+| **Adaptive/개인화** | ◐ | ◐ | ◐ | ◐ | ○ | ● |
+| **멀티모달**(vision·음성) | ◐ | ◐ | ● | ◐ | ○ | ● |
+| **도구 연결성(MCP)** | ● | ● | ● | ● | ◐ | ● |
+| **Skills/확장** | ● | ◐ | ◐ | ● | ● | ● |
+| **멀티 서피스/채널** | ◐ | ◐ | ◐ | ◐ | ○ | ● |
+| **세션 핸드오프** | ○ | ○ | ◐ | ◐ | ○ | ● |
+| **프로필/설정 배포** | ◐ | ○ | ◐ | ● | ○ | ● |
+| **팀/공유 메모리** | ◐ | ○ | ◐ | ◐ | ○ | ◐ |
 
 ---
 
-## 2. 주요 기능 심층 분석 및 상호 검증
+## 2. 상호 검증을 통한 핵심 인사이트
 
-### 2.1. 인프라와 제어: Harness & Permissions
-*   **Claude Code**: **27종의 Lifecycle Hooks**와 7단계 권한 모드를 통해 모델 주변에 결정론적 운영 하니스를 구축했습니다 [1][7]. 특히 `/rewind` 명령을 통한 3가지 모드의 체크포인트 복구 기능은 작업 안정성을 극대화합니다 [14].
-*   **Codex CLI**: Rust 기반 **Starlark 정책 엔진**(`execpolicy`)을 사용하여 쉘 명령어를 트리시터(tree-sitter)로 구문 분석 후 규칙을 적용합니다 [2][4]. `codex exec`와 전용 `cron` 서브커맨드를 통한 무인 자동화 역량이 뛰어납니다 [15].
+### 2.1. 인프라의 완성도: Harness & Sandboxing
+*   **Antigravity CLI (`agy`)**: 초기 검토 시 Gemini CLI와의 혼동 가능성이 제기되었으나, 재조사 결과 `nsjail`(Linux) 및 `sandbox-exec`(macOS)를 통한 **Terminal Sandboxing**을 네이티브하게 제공함이 확증되었습니다. 설정 파일은 호환성을 위해 계승되었으나 Go 기반의 고도화된 하네스에서 1급(●) 보안 기능을 구현했습니다 [Ref 3][Ref A].
+*   **Codex CLI**: Python의 안전한 서브셋인 **Starlark** 기반의 정책 엔진(`execpolicy`)을 사용하여 결정론적인 권한 제어 시스템을 구축했습니다. [Ref 2][Ref 4].
 
-### 2.2. 지능형 메모리와 협업: Memory & Collaboration
-*   **Antigravity**: **Knowledge Base** 아키텍처를 도입하여 학습 내용을 단순 텍스트가 아닌 프로젝트 프리미티브로 관리합니다. **Mission Control** 하에서 Manager, Writer, Critic, Tester 등의 전문 서브에이전트를 비동기 병렬로 오케스트레이션합니다 [3][12].
-*   **Hermes Agent**: **자동 스킬 생성(Auto-Skill Creation)**과 SQLite 기반의 3계층 영구 메모리가 핵심입니다 [10]. 특히 메신저 게이트웨이를 통한 **세션 핸드오프(/handoff)** 기능은 타 에이전트에서 보기 힘든 독보적인 협업 기능입니다 [11].
+### 2.2. 지속 가능성과 세션 관리: Memory & Checkpoint
+*   **Claude Code**: 외과적인 **`/rewind`** 명령과 5단계 압축 파이프라인을 통해 장기 실행 세션의 안정성을 확보한 독보적인 사례입니다 [Ref 1][Ref 14].
+*   **Hermes Agent**: `/handoff` 명령을 통한 **채널 간(텔레그램↔터미널) 세션 연속성**과 개인정보를 제외한 설정을 팀에 공유하는 `Profile Distributions` 기능이 강점입니다 [Ref 10].
 
-### 2.3. 토큰과 분석 최적화: Context & Analysis
-*   **oh-my-openagent**: "Tokenmaxxers"를 위한 하니스로서, IntentGate와 카테고리별 모델 라우팅을 통해 비용을 최적화합니다. LSP 및 AST-Grep 도구를 내장하여 IDE 급의 코드 분석 기능을 제공합니다 [5].
-*   **Claude Code**: 5단계 압축 파이프라인(Micro-compaction ~ Auto-compact)을 통해 장기 세션에서의 컨텍스트 효율을 극대화합니다 [6].
+### 2.3. 오케스트레이션과 분석: Multi-Agent & Code Analysis
+*   **Antigravity**: `Mission Control` 체제 하에 Manager, Writer, Critic, Tester 역할을 분담하여 병렬 처리를 극대화했습니다 [Ref 3][Ref 12].
+*   **oh-my-openagent**: LSP 및 AST-Grep을 내장하여 단순 텍스트 편집이 아닌 구문 분석 기반의 정밀 명령어 매칭과 리팩토링을 제공합니다 [Ref 5].
 
 ---
 
-## 3. 향후 유사 도구 개발을 위한 전략적 인사이트
+## 3. 향후 유사 도구 개발을 위한 전략적 제언 (최종)
 
-1.  **Harness-First 설계**: 모델의 지능보다 중요한 것은 **Lifecycle Hooks와 샌드박싱**입니다. Claude Code의 98% 하니스 비중과 Codex의 Starlark 정책 엔진은 차세대 도구가 갖춰야 할 필수 인프라입니다.
-2.  **비동기 다중 에이전트 역할 분담**: Antigravity의 Mission Control이나 oh-my-openagent의 Virtual Team 구조처럼, 하나의 에이전트가 모든 것을 하기보다 **Planning, Writing, Reviewing, Testing**을 분리하여 병렬로 수행하는 것이 대규모 프로젝트 해결의 핵심입니다.
-3.  **지속적 학습과 스킬 승격**: Hermes의 자가 학습 루프처럼 작업 성공 사례를 **재사용 가능한 스킬 문서**로 자동 변환하여 개인/팀의 자산으로 축적하는 기능이 에이전트의 장기적 가치를 결정합니다.
-4.  **다채널 접근성과 세션 유지**: CLI에 국한되지 않고 Hermes처럼 메신저 채널을 지원하며, 세션을 끊김 없이 이어가는(Handoff) 능력이 실무 활용도를 높입니다.
+1.  **투명한 계층형 메모리 관리**: Claude Code의 평문 파일 메모리와 Codex의 비동기 요약/병합 관리를 결합하여 가독성과 효율성을 동시에 잡는 아키텍처가 필요합니다.
+2.  **자기개선 폐루프의 표준화**: Hermes처럼 성공 사례를 `agentskills.io` 표준 스킬로 자동 승격시켜 개인의 학습이 팀의 자산으로 정착되는 시스템을 구축해야 합니다.
+3.  **Harness-Native 보안 및 격리**: 샌드박싱과 다단계 권한 제어는 옵션이 아닌 기본 인프라여야 하며, 작업별 격리를 위한 Git/Worktree 활용 능력이 필수적입니다.
+4.  **다채널 핸드오프와 협업**: CLI를 넘어 메신저 등 다양한 서피스를 지원하되, 세션의 맥락을 끊김 없이 유지하는 핸드오프 기능이 실무 생산성을 좌우할 것입니다.
 
 ---
 
@@ -83,3 +85,4 @@
 *   [13] *Skill Marketplace and Open Standards for Agents* - https://agentskills.io
 *   [14] *Claude Code /rewind: Sophisticated Session Management* - https://vincentqiao.com/posts/claude-code-rewind
 *   [15] *Codex CLI: Headless Automation and Cron Features* - https://github.com/openai/codex-cli/releases/tag/v0.130
+*   [Ref A] *Terminal Sandboxing in Antigravity* - https://antigravity.google/docs/ide-settings
