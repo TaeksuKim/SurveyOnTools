@@ -1,0 +1,5 @@
+{
+    "permissions": {
+        "allow": [ "Bash(sh */sleep_and_run_*.sh)" ]
+    }
+}
