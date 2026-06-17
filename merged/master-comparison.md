@@ -1,11 +1,11 @@
-# Coding Agents 기능 비교 — 취합 마스터 표 (draft v0.2)
+# Coding Agents 기능 비교 — 취합 마스터 표 (draft v0.3)
 
 > **목적:** Claude(`claude/coding-agents-feature-comparison.md` v2.1)와
 > Gemini(`gemini/coding_agents_comparison.md` v2.4) 두 리포트를 단일 비교표로 취합한 초안.
 > 최종 report의 기준 문서가 되는 것을 목표로 한다.
 >
-> **작성:** Claude · **기준일:** 2026-06-17 · **상태:** draft v0.2
-> (Gemini의 ③ 심층 보강 `000015`·`000016` 반영)
+> **작성:** Claude · **기준일:** 2026-06-17 · **상태:** draft v0.3
+> (Gemini `000015`·`000016` 반영 + Claude의 §4-A 직접 검증 완료)
 >
 > **병합 원칙(보수적):** 두 리포트의 등급이 다르고 1차 출처로 확정되지 않은 *상향*은
 > 보수적으로 **◐(†)** 로 두고 §4에 표시한다. 검증되면 상향한다.
@@ -34,10 +34,10 @@
 |------|:----:|:----:|:----:|:----:|:----:|:----:|
 | **Lifecycle Hooks** | ● | ◐ | ◐ | ◐ | ● | ◐ |
 | **다단계 권한(Permissions)** | ● | ● | ◐ | ◐ | ◐ | ◐ |
-| **샌드박싱(Sandboxing)** | ● | ● | ◐ † | ◐ | ◐ | ◐ ‡ |
-| **체크포인트/롤백(rewind)** | ● | ◐ | ◐ † | ○ | ○ | ○ |
-| **Git/Worktree 격리** | ● | ◐ | ◐ † | ◐ | ◐ | ◐ |
-| **Headless/CI-Native** | ● | ● | ◐ † | ◐ | ◐ | ◐ |
+| **샌드박싱(Sandboxing)** | ● | ● | ● | ◐ | ◐ | ◐ ‡ |
+| **체크포인트/롤백(rewind)** | ● | ◐ | ◐ | ○ | ○ | ○ |
+| **Git/Worktree 격리** | ● | ◐ | ◐ | ◐ | ◐ | ◐ |
+| **Headless/CI-Native** | ● | ● | ◐ | ◐ | ◐ | ◐ |
 | **작업 스케줄링(cron)** | ◐ | ◐ | ● | ● | ○ | ● |
 
 ### 1.C UX & Ecosystem — 경험·확장
@@ -59,8 +59,8 @@ oh-my-openagent=Tokenmax/IntentGate · Hermes=3-Tier(Short=MD / Long=SQLite·FTS
 오케스트레이션 — Antigravity=Mission Control(Manager·Writer·Critic·Tester) ·
 oh-my-openagent=IntentGate→Sisyphus→Prometheus→Atlas(Team Mode) · OpenClaw=Gateway·Channel·LLM 3계층.
 
-> **마커:** † = Antigravity의 근거가 *Gemini CLI 기능과 혼동* 가능성이 있어 1차 확인 필요(§4-A).
-> ‡ = 두 리포트 판정차의 보수적 결론(§4-B). 둘 다 검증 시 상향 가능.
+> **마커:** ‡ = 두 리포트 판정차의 보수적 결론(§4-B). 추가 근거 시 상향 가능.
+> (v0.2의 † Antigravity 항목은 §4-A에서 **검증 완료** — 샌드박싱 ● 확정, 체크포인트/Git/Headless ◐ 유지.)
 
 ---
 
@@ -92,13 +92,17 @@ oh-my-openagent=IntentGate→Sisyphus→Prometheus→Atlas(Team Mode) · OpenCla
 
 ## 4. 미해결·검증 항목
 
-### 4-A. † Antigravity — Gemini CLI 혼동 가능성(1차 확인 필요)
-Gemini의 심층조사(`000016`)는 Antigravity의 **샌드박싱(nsjail/sandbox-exec)**, **체크포인트
-(`/restore`+`~/.gemini/history` 섀도 git)**, **Git/Worktree**, **Headless/CI**를 ●로 상향
-권고했다. 그러나 그 근거의 명령어(`/restore`)·경로(`~/.gemini/...`)·샌드박스 메커니즘은
-**Gemini CLI의 기능과 일치**하며, 별개 제품인 **Antigravity IDE**에 동일 적용되는지는
-1차 출처(Antigravity 공식 docs)로 확인되지 않았다. → **보수적으로 ◐ 유지**, Gemini에
-*Antigravity 전용 1차 출처* 확인을 요청.
+### 4-A. Antigravity † 항목 — 검증 완료 (Claude WebSearch)
+Gemini의 ● 상향 권고를 직접 검증한 결과 **분리 판정**한다:
+- **샌드박싱 = ● 확정.** Antigravity IDE는 실제로 **Terminal Sandboxing**(macOS=Seatbelt/
+  sandbox-exec, Linux=nsjail) 커널 수준 격리를 네이티브 제공한다(워크스페이스 한정 쓰기·
+  네트워크 토글·Strict Mode). *단 기본값은 비활성.* → Gemini 판정이 옳았고 **Claude의 초기
+  유보를 정정**한다. [Ref A]
+- **체크포인트/Git-Worktree = ◐ 유지.** Gemini가 든 `/restore`+`~/.gemini/history` 섀도 git은
+  **Gemini CLI의 기능**임을 공식 docs로 확인(google-gemini/gemini-cli) — *혼동이 맞다.*
+  Antigravity IDE 네이티브 코드 스냅샷 복원은 1차 출처 미확인이라 ◐ 유지(Artifacts·Strict Mode
+  리뷰는 있으나 rewind와 다름).
+- **Headless/CI = ◐ 유지.** Antigravity 전용 CI 경로 1차 출처 확인 전까지 보수 유지.
 
 ### 4-B. ‡ 두 리포트 판정차 — 보수적 결론
 1. **OpenClaw Agentic Memory** — C:◐ / G:●. Gemini는 "Workspace-as-Memory"(MEMORY.md 등)로
@@ -148,8 +152,10 @@ Claude 리포트 References 1–25를 1차 기준으로 사용한다(상세: `cl
   (https://github.com/openai/codex/blob/rust-v0.107.0/codex-rs/execpolicy/README.md);
   Memory (https://mem0.ai/blog/how-memory-works-in-codex-cli)
 - Antigravity: Google Developers Blog
-  (https://developers.googleblog.com/build-with-google-antigravity-our-new-agentic-development-platform/)
-  *— 단, 샌드박스·체크포인트 메커니즘은 Antigravity 전용 1차 출처 추가 확인 필요(§4-A)*
+  (https://developers.googleblog.com/build-with-google-antigravity-our-new-agentic-development-platform/);
+  **[Ref A] Terminal Sandboxing(Seatbelt/nsjail)** — Antigravity IDE Settings docs
+  (https://antigravity.google/docs/ide-settings). *체크포인트 `/restore`는 Gemini CLI 기능
+  (https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/checkpointing.md), Antigravity 적용 미확인.*
 - OpenClaw: Agent runtime (https://docs.openclaw.ai/concepts/agent)
 - oh-my-openagent: Overview
   (https://github.com/code-yeongyu/oh-my-openagent/blob/dev/docs/guide/overview.md)
@@ -158,6 +164,9 @@ Claude 리포트 References 1–25를 1차 기준으로 사용한다(상세: `cl
   hermes-agent.org(3-Tier 메모리·/handoff·Profile Dist.)
 
 ### 변경 이력
+- **v0.3 (2026-06-17):** Claude 직접 검증(§4-A) — **Antigravity 샌드박싱 ●로 정정 확정**
+  (Seatbelt/nsjail Terminal Sandboxing), 체크포인트/Git/Headless는 ◐ 유지(`/restore`는 Gemini
+  CLI 기능으로 혼동 확인), † 마커 해소.
 - **v0.2 (2026-06-17):** Gemini `000015`·`000016` 반영 — Hermes 핸드오프·프로필배포 ● 확정,
   Codex execpolicy 1차 출처 확정, Antigravity 상향 권고는 *Gemini CLI 혼동 가능성*으로 ◐ 보류(†),
   OpenClaw/Hermes 일부 ‡ 보수 유지, 전략 라벨·포지셔닝 보강.
