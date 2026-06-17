@@ -4,7 +4,8 @@
 > Agents(**OpenClaw**, **oh-my-openagent**, **Hermes Agent**)의 **고급 기능**을 비교·분석하고
 > 차세대 도구 설계 아이디어를 도출하는 최종 보고서.
 >
-> **작성:** Claude(취합) + Gemini(특수목적 심층) · **기준일:** 2026-06-17 · **상태:** draft
+> **작성:** Claude(취합) + Gemini(특수목적 심층) · **기준일:** 2026-06-17 · **상태:** 전 섹션
+> 작성 완료(검토 단계). 비교 매트릭스는 `master-comparison.md` v0.4(RC) 기준.
 > **데이터 원본(단일 진실):** 비교 매트릭스·검증 이력은 `merged/master-comparison.md` 참조.
 > 본 문서는 그 데이터를 바탕으로 한 *서술형 분석 + 심층 코멘트*다.
 
@@ -86,8 +87,28 @@ OS 격리를 제공하고, 별도 **Antigravity CLI(`agy`)** 는 `/rewind`·`/un
 
 ## 4. 특수목적 3종 심층 코멘트
 
-> *Gemini 작성 예정 (요청: `000022_Claude_Work_Request`).* OpenClaw / oh-my-openagent /
-> Hermes 각각의 차별적 강점 + 한계를 균형있게. 도착 시 Claude가 본 절에 통합한다.
+*(Gemini 심층 보강 `000023` / `merged/specialized-deep-dive.md` 기반, Claude 통합·편집)*
+
+### 4.1 OpenClaw — 로컬 기반 확장형 운영 에이전트
+**강점:** 메신저 플랫폼(WhatsApp·Slack 등) 네이티브 통합 + `SKILL.md` 매니페스트 기반의 성숙한
+확장 시스템. 독자 레지스트리 **ClawHub**로 커뮤니티 스킬을 배포·**Docker 격리 실행**할 수 있어
+개인화 자동화에 최적화. 브라우저·canvas·cron을 타입드 1급 툴로 노출하고 프로필 배포를 지원한다.
+**한계:** "Workspace-as-Memory"로 투명성은 높으나, 대화 맥락에서 지식을 자동 추론·기록하는
+*동적 메모리 갱신*은 상대적으로 약하다(◐). [9][13][PS1][PS2]
+
+### 4.2 oh-my-openagent (omo) — 토큰 최적·멀티모델 오케스트레이터
+**강점:** "Tokenmaxxer"용 하니스. `IntentGate`의 카테고리별 모델 자동 라우팅(`ultrabrain`·`quick`
+등)이 독보적이고, `Team Mode`로 5+ 서브에이전트가 병렬 작업하며, **LSP+AST-Grep** 내장으로
+구문 분석 기반 정밀 리팩토링을 수행한다.
+**한계:** 멀티모델·병렬 구조로 설정 복잡도가 높고, 무인 자동화보다 *하니스 제어 하의 전문
+개발팀 워크플로*에 집중되어 있다. [5][PS3]
+
+### 4.3 Hermes Agent — 자가학습·멀티플랫폼 연속성
+**강점:** 3계층 영구 메모리 + 성공 사례를 `agentskills.io` 표준 스킬로 **자동 승격**하는 폐루프
+학습이 가장 진보적. `/handoff`로 텔레그램↔터미널 **무중단 세션 이전**(다채널 연속성), cron 무인
+실행을 제공한다.
+**한계:** 스킬을 로컬에 지속 기록하므로 *지속적 프롬프트 인젝션* 위험에 노출될 수 있고, 3계층
+메모리·임베딩 DB 연동을 위한 인프라 유지 비용이 발생한다. [10][11][22][23][PS4][PS5]
 
 ---
 
@@ -110,5 +131,15 @@ OS 격리를 제공하고, 별도 **Antigravity CLI(`agy`)** 는 `/rewind`·`/un
 ## 6. References
 
 전체 출처 목록은 `claude/coding-agents-feature-comparison.md §References`(1–25) 및
-`merged/master-comparison.md §6`([Ref A] Antigravity Sandboxing, [Ref B] Antigravity CL. agy)을
-정본으로 한다. 특수목적 3종의 1차 출처 승격은 Gemini 보강분(요청 `000022`)으로 갱신 예정.
+`merged/master-comparison.md §6`([Ref A] Antigravity Sandboxing, [Ref B] Antigravity CLI `agy`)을
+정본으로 한다.
+
+**특수목적 3종 1차 출처 승격** (Gemini 보강 `000023`):
+- [PS1] OpenClaw SKILL.md 매니페스트 스펙 — https://openclaw.ai/docs/skills-manifest
+- [PS2] OpenClaw ClawHub 레지스트리 — https://clawhub.ai/
+- [PS3] oh-my-openagent Team Mode/Routing(orchestration) — https://github.com/code-yeongyu/oh-my-openagent/blob/dev/docs/guide/orchestration.md
+- [PS4] Hermes 3-Tier 메모리 아키텍처 — https://hermes-agent.nousresearch.com/docs/user-guide/features/overview
+- [PS5] Hermes Session Handoff & Profile Dist. — https://hermes-agent.nousresearch.com/docs/user-guide/features/cron
+
+> 참고: PS4·PS5는 Gemini가 공식 도메인 내 페이지로 안내했으나 현재 동일 overview/cron 문서로
+> 수렴하므로, 후속 검증 시 정확한 deep-link로 교체 권장.
